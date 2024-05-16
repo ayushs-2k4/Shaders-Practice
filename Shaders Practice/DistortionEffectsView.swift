@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DistortionEffectsView: View {
     @State private var start = Date.now
+    @State private var progress: CGFloat = 0.0
 
     var body: some View {
         TimelineView(.animation) { timeline in
@@ -30,6 +31,32 @@ struct DistortionEffectsView: View {
                                 .float2(proxy.size)
                             ),
                             maxSampleOffset: .init(width: 100, height: 100)
+                        )
+                }
+
+            Image(.card)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+                .padding(24)
+                .onTapGesture {
+                    withAnimation {
+                        self.progress = 1 - self.progress
+                    }
+                }
+                .visualEffect {
+                    content,
+                        _ in
+                    let k = abs(elapsedTime.magnitude.rounded() - elapsedTime.magnitude)
+                    
+                    return content
+                        .distortionEffect(
+                            ShaderLibrary.dynamicIslandType(
+                                .boundingRect,
+//                                .float(self.progress)
+                                .float(k)
+                            ),
+                            maxSampleOffset: .zero
                         )
                 }
         }
